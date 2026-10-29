@@ -25,10 +25,13 @@ class ManterClienteUI:
         fone = st.text_input("INFORM O TELEFONE")
         senha = st.text_input("INFORME A SENHA", type="password")
         if st.button("INSERIR"):
-            Service.cliente_inserir(nome, email, fone, senha)
-            st.success("CLIENTE INSERIDO COM SUCESSO")
-            time.sleep(2)
-            st.rerun()
+            try:
+                Service.cliente_inserir(nome, email, fone, senha)
+                st.success("CLIENTE INSERIDO COM SUCESSO")
+                time.sleep(2)
+                st.rerun()
+            except ValueError as erro:
+                st.error(str(erro))
     def atualizar():
         clientes = Service.cliente_listar()
         if len(clientes) == 0: st.write("NENHUM CLIENTE CADASTRADO")
@@ -39,15 +42,23 @@ class ManterClienteUI:
             fone = st.text_input("NOVO TELEFONE", op.get_fone())
             senha = st.text_input("NOVA SENHA", op.get_senha(), type="password")
             if st.button("ATUALIZAR"):
-                id = op.get_id()
-                Service.cliente_atualizar(id, nome, email, fone, senha)
-                st.success("CLIENTE CADSTRADO COM SUCESSO")
+                try:
+                    Service.cliente_atualizar(id, nome, email, fone, senha)
+                    st.success("CLIENTE ATUALIZADO COM SUCESSO")
+                    time.sleep(2)
+                    st.rerun()
+                except ValueError as erro:
+                    st.error(str(erro))
     def excluir():
         clientes = Service.cliente_listar()
         if len(clientes) == 0: st.write("NENHUM CLIENTE CADASTRADO")
         else:
             op = st.selectbox("EXCLUSÃO DE CLIENTES", clientes)
-            if st.button("EXCLUIR"):
-                id = op.get_id()
-                Service.cliente_excluir(id) 
-                st.success("CLIENTE EXCLUÍDO COM SUCESSO")
+            if st.button("INSERIR"):
+                try:
+                    Service.cliente_excluir(id)
+                    st.success("CLIENTE EXCLUIDO COM SUCESSO")
+                    time.sleep(2)
+                    st.rerun()
+                except ValueError as erro:
+                    st.error(str(erro))

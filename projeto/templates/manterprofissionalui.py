@@ -25,17 +25,19 @@ class ManterProfissionalUI:
             df = pd.DataFrame(list_dic)
             st.dataframe(df)
 
-    def inserir():
+    def inserir():#
         nome = st.text_input("INFORME O NOME")
         email = st.text_input("INFORME O E-MAIL")
         especialidade = st.text_input("INFORME A ESPECIALIDADE")
         senha = st.text_input("Informe a senha", type="password")
         if st.button("INSERIR"):
-            Service.profissional_inserir(
-                nome, email, especialidade, senha)
-            st.success("PROFISSIONAL INSERIDO COM SUCESSO")
-            time.sleep(2)
-            st.rerun()
+            try:
+                Service.profissional_inserir(nome, email, especialidade, senha)
+                st.success("PROFISSIONAL INSERIDO COM SUCESSO")
+                time.sleep(2)
+                st.rerun()
+            except ValueError as erro:
+                st.error(str(erro))
 
     def atualizar():
         profissionais = Service.profissional_listar()
