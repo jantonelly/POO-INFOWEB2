@@ -12,10 +12,6 @@ from datetime import datetime, timedelta
 
 class Service:
     #CLIENTE
-    # @staticmethod
-    # def cliente_inserir(nome, email, fone, senha):
-    #     obj = Cliente(0, nome, email, fone, senha)
-    #     ClienteDAO().inserir(obj)
     @staticmethod
     def cliente_inserir(nome, email, fone, senha):
         Service.validar_email_unico(email, "cliente")
@@ -40,13 +36,6 @@ class Service:
         if len(horarios) > 0:
             raise ValueError("Não é possível excluir um cliente que possui horários agendados.")
     ClienteDAO().excluir(id)
-    # @staticmethod
-    # def cliente_atualizar(id, nome, email, fone, senha):
-    #     obj = Cliente(id, nome, email, fone, senha)
-    #     ClienteDAO().atualizar(obj)
-    # @staticmethod
-    # def cliente_excluir(id):
-    #     ClienteDAO().excluir(id)
     @staticmethod
     def cliente_criar_admin():
         for c in Service.cliente_listar():
@@ -94,14 +83,6 @@ class Service:
         ServicoDAO().excluir(id)
 
     #HORÁRIO
-    # @staticmethod
-    # def horario_inserir(data, confirmado, id_cliente, id_servico, id_profissional):
-    #     obj = Horario(0, data)
-    #     obj.set_confirmado(confirmado)
-    #     obj.set_id_cliente(id_cliente)
-    #     obj.set_id_servico(id_servico)
-    #     obj.set_id_profissional(id_profissional)
-    #     HorariosDAO().inserir(obj)
     @staticmethod
     def horario_inserir(data, confirmado, id_cliente, id_servico, id_profissional):
         obj = Horario(0, data)
@@ -119,14 +100,6 @@ class Service:
     @staticmethod
     def horario_listar_id(id):
           return HorariosDAO().listar_id(id)
-    # @staticmethod
-    # def horario_atualizar(id, data, confirmado, id_cliente, id_servico, id_profissional):
-    #     obj = Horario(id, data)
-    #     obj.set_confirmado(confirmado)
-    #     obj.set_id_cliente(id_cliente)
-    #     obj.set_id_servico(id_servico)
-    #     obj.set_id_profissional(id_profissional)
-    #     HorariosDAO().atualizar(obj)
     @staticmethod
     def horario_atualizar(
         id, data, confirmado, id_cliente, id_servico,
@@ -138,9 +111,6 @@ class Service:
         obj.set_id_servico(id_servico)
         obj.set_id_profissional(id_profissional)
         HorariosDAO().atualizar(obj)
-    # @staticmethod
-    # def horario_excluir(id):
-    #     HorariosDAO().excluir(id)
     @staticmethod
     def horario_excluir(id):
         horario = Service.horario_listar_id(id)
@@ -209,10 +179,6 @@ class Service:
         Service.validar_email_unico(email, "profissional")
         obj = Profissional(0, nome, email, especialidade, senha)
         ProfissionalDAO().inserir(obj)
-    # @staticmethod
-    # def profissional_inserir(nome, email, especialidade, senha):
-    #     obj = Profissional(0, nome, email, especialidade, senha)
-    #     ProfissionalDAO().inserir(obj)
     @staticmethod
     def profissional_listar():
         r = ProfissionalDAO().listar()
@@ -227,19 +193,12 @@ class Service:
         Service.validar_email_unico(email, "profissional", id)
         obj = Profissional(id, nome, email, especialidade, senha)
         ProfissionalDAO().atualizar(obj)
-    # @staticmethod
-    # def profissional_atualizar(id, nome, email, especialidade, senha):
-    #     obj = Profissional(id, nome, email, especialidade, senha)
-    #     ProfissionalDAO().atualizar(obj)
     @staticmethod
     def profissional_excluir(id):
         horarios = Service.horario_listar_profissional(id)
         if len(horarios) > 0:
             raise ValueError("Não é possível excluir um profissional que possui horários cadastrados.")
         ProfissionalDAO().excluir(id)
-    # @staticmethod
-    # def profissional_excluir(id):
-    #     ProfissionalDAO().excluir(id)
     @staticmethod
     def profissional_autenticar(email, senha):
         for c in Service.profissional_listar():
