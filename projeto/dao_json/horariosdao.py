@@ -1,6 +1,6 @@
 from models.horario import Horario
 import json
-from models.dao import DAO
+from dao_json.dao import DAO
 
 class HorariosDAO(DAO):
     def __init__(self):

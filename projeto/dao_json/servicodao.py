@@ -1,11 +1,11 @@
-from models.cliente import Cliente
+from models.servico import Servico
 import json
-from models.dao import DAO
+from dao_json.dao import DAO
 
-class ClienteDAO(DAO):
+class ServicoDAO(DAO):
     def __init__(self):
-        super().__init__("cliente.json")
-        
+        super().__init__("servicos.json")
+
     def _abrir(self):  
         try:  
             arquivo = open(self._arquivo, mode = "r")
@@ -13,12 +13,12 @@ class ClienteDAO(DAO):
             arquivo.close()
             self._objetos = []
             for dic in list_dic:
-                obj = Cliente.from_json(dic)
+                obj = Servico.from_json(dic)
                 self._objetos.append(obj)
         except FileNotFoundError:
             pass
 
     def _salvar(self):    
-        arquivo = open(self._arquivo, mode = "w")
-        json.dump(self._objetos, arquivo, default = Cliente.to_json, indent = 2)
+        arquivo = open(self.__arquivo, mode = "w")
+        json.dump(self._objetos, arquivo, default = Servico.to_json, indent = 2)
         arquivo.close()

@@ -1,6 +1,6 @@
 from models.atendimento import Atendimento
 import json
-from models.dao import DAO
+from dao_json.dao import DAO
 
 class AtendimentoDAO(DAO):
     def __init__(self):
