@@ -1,50 +1,54 @@
 from dao_sql.dao import DAO
 from models.atendimento import Atendimento
+from datetime import datetime
 
 class AtendimentoDAO(DAO):
-    @classmethod
-    def inserir(cls, obj):
-        cls.abrir()
-        sql = """
+    def inserir(self, obj):
+        self.abrir()
+        sql = '''
             INSERT INTO atendimento (data, queixa_principal, historico_saude, avaliacao, prescricao, id_horario)
             VALUES (?, ?, ?, ?, ?, ?)
-        """
-        cls.execute(sql, (obj.get_data(), obj.get_queixa_principal(), obj.get_historico_saude(), obj.get_avaliacao(), obj.get_prescricao(), obj.get_id_horario()))
-        cls.fechar()
+        '''
+        self.execute(sql, (obj.get_data().strftime('%d/%m/%Y %H:%M'), obj.get_queixa_principal(), obj.get_historico_saude(), obj.get_avaliacao(), obj.get_prescricao(), obj.get_id_horario()))
+        self.fechar()
 
-    @classmethod
-    def listar(cls):
-        cls.abrir()
-        sql = "SELECT * FROM atendimento"
-        cursor = cls.execute(sql)
+    def listar(self):
+        self.abrir()
+        sql = 'SELECT * FROM atendimento'
+        cursor = self.execute(sql)
         rows = cursor.fetchall()
-        objs = [Atendimento(id, data, queixa_principal, historico_saude, avaliacao, prescricao, id_horario) for (id, data, queixa_principal, historico_saude, avaliacao, prescricao, id_horario) in rows]
-        cls.fechar()
+        objs = []
+        for (id, data, queixa_principal, historico_saude, avaliacao, prescricao, id_horario) in rows:
+            obj = Atendimento(id, datetime.strptime(data, '%d/%m/%Y %H:%M'), queixa_principal, historico_saude, avaliacao, prescricao)
+            obj.set_id_horario(id_horario)
+            objs.append(obj)
+        self.fechar()
         return objs
 
-    @classmethod
-    def listar_id(cls, id):
-        cls.abrir()
-        sql = "SELECT * FROM atendimento WHERE id = ?"
-        cursor = cls.execute(sql, (id,))
+    def listar_id(self, id):
+        self.abrir()
+        sql = 'SELECT * FROM atendimento WHERE id = ?'
+        cursor = self.execute(sql, (id,))
         row = cursor.fetchone()
-        obj = Atendimento(*row) if row else None
-        cls.fechar()
+        obj = None
+        if row:
+            obj = Atendimento(row[0], datetime.strptime(row[1], '%d/%m/%Y %H:%M'), row[2], row[3], row[4], row[5])
+            obj.set_id_horario(row[6])
+        self.fechar()
         return obj
 
-    @classmethod
-    def atualizar(cls, obj):
-        cls.abrir()
-        sql = """
-            UPDATE atendimento SET data=?, queixa_principal=?, historico_saude=?, avaliacao=?, prescricao=?, id_horario=?
+    def atualizar(self, obj):
+        self.abrir()
+        sql = '''
+            UPDATE atendimento SET data=?, queixa_principal=?, historico_saude=?,
+            avaliacao=?, prescricao=?, id_horario=?
             WHERE id=?
-        """
-        cls.execute(sql, (obj.get_data(), obj.get_queixa_principal(), obj.get_historico_saude(), obj.get_avaliacao(), obj.get_prescricao(), obj.get_id_horario(), obj.get_id()))
-        cls.fechar()
+        '''
+        self.execute(sql, (obj.get_data().strftime('%d/%m/%Y %H:%M'), obj.get_queixa_principal(), obj.get_historico_saude(), obj.get_avaliacao(), obj.get_prescricao(), obj.get_id_horario(), obj.get_id()))
+        self.fechar()
 
-    @classmethod
-    def excluir(cls, id):
-        cls.abrir()
-        sql = "DELETE FROM atendimento WHERE id=?"
-        cls.execute(sql, (id,))
-        cls.fechar()
+    def excluir(self, id):
+        self.abrir()
+        sql = 'DELETE FROM atendimento WHERE id=?'
+        self.execute(sql, (id,))
+        self.fechar()

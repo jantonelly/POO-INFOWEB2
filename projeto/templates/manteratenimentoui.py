@@ -1,144 +1,75 @@
 import streamlit as st
 import pandas as pd
+from service import Service
 import time
 from datetime import datetime
-from service import Service
 
 class ManterAtendimentoUI:
-   def main():
-        st.header("CADASTRO DE ATENDIMENTOS")
-        tab1, tab2, tab3, tab4 = st.tabs(
-            ["LISTAR", "INSERIR", "ATUALIZAR", "EXCLUIR"])
-        with tab1:ManterAtendimentoUI.listar()
-        with tab2:ManterAtendimentoUI.inserir()
-        with tab3:ManterAtendimentoUI.atualizar()
-        with tab4:ManterAtendimentoUI.excluir()
+    def main():
+        st.header("CADASTRO DE ATENDIMENTO")
+        tab1, tab2, tab3, tab4 = st.tabs(["Listar", "Inserir", "Atualizar", "Excluir"])
+        with tab1: ManterAtendimentoUI.listar()
+        with tab2: ManterAtendimentoUI.inserir()
+        with tab3: ManterAtendimentoUI.atualizar()
+        with tab4: ManterAtendimentoUI.excluir()
 
-   def listar():
+    def listar():
         atendimentos = Service.atendimento_listar()
-        if len(atendimentos) == 0:
-            st.write("NENHUM ATENDIMENTO CADASTRADO")
+        if len(atendimentos) == 0: st.write("Nenhum atendimento cadastrado")
         else:
-            list_dic = []
+            dic = []
             for obj in atendimentos:
-                list_dic.append({"id": obj.get_id(), "data": obj.get_data(), "queixa_principal": obj.get_queixa_principal(), "historico_saude": obj.get_historico_saude(), "avaliacao": obj.get_avaliacao(), "prescricao": obj.get_prescricao(), "id_horario": obj.get_id_horario})
-            df = pd.DataFrame(list_dic)
+                horario = Service.horario_listar_id(obj.get_id_horario())
+                cliente = Service.cliente_listar_id(horario.get_id_cliente())
+                if cliente != None: cliente = cliente.get_nome()
+                dic.append({"id" : obj.get_id(), "data" : obj.get_data(),
+                "queixa principal" : obj.get_queixa_principal(), "cliente" : cliente})
+            df = pd.DataFrame(dic)
             st.dataframe(df)
 
-   def inserir():
-        data = st.date_input("INFORME A DATA")
-        hora = st.time_input("INFORME A HORA")
-        queixa_principal = st.text_input(
-            "INFORME A QUEIXA PRINCIPAL")
-        historico_saude = st.text_input(
-            "INFORME O HISTÓRICO DE SAÚDE")
-        avaliacao = st.text_input(
-            "INFORME A AVALIAÇÃO")
-        prescricao = st.text_input(
-            "INFORME A PRESCRIÇÃO")
-        id_horario = st.number_input(
-            "INFORME O ID DO HORÁRIO",
-            min_value=0,
-            step=1)
-        if st.button("INSERIR"):
-            data_hora = datetime.combine(data, hora)
-            Service.atendimento_inserir(
-                data_hora,
-                queixa_principal,
-                historico_saude,
-                avaliacao,
-                prescricao,
-                id_horario
-            )
-            st.success(
-                "ATENDIMENTO INSERIDO COM SUCESSO")
+    def inserir():
+        horarios = Service.horario_listar()
+        data = st.text_input("Informe a data e horário do atendimento", datetime.now().strftime("%d/%m/%Y %H:%M"))
+        queixa_principal = st.text_input("Informe a queixa principal")
+        historico_saude = st.text_input("Informe o histórico de saúde")
+        avaliacao = st.text_input("Informe a avaliação")
+        prescricao = st.text_input("Informe a prescrição")
+        horario = st.selectbox("Informe o horário", horarios)
+        if st.button("Inserir"):
+            Service.atendimento_inserir(datetime.strptime(data, "%d/%m/%Y %H:%M"), queixa_principal,\
+                                        historico_saude, avaliacao, prescricao, horario.get_id())
+            st.success("Atendimento inserido com sucesso")
             time.sleep(2)
             st.rerun()
 
-#    def atualizar():
-#         atendimentos = Service.atendimento_listar()
-#         if len(atendimentos) == 0:
-#             st.write("NENHUM ATENDIMENTO CADASTRADO")
-#         else:
-#             op = st.selectbox(
-#                 "ATUALIZAÇÃO DE ATENDIMENTO",
-#                 atendimentos)
-#             data = st.date_input(
-#                 "NOVA DATA",
-#                 op.get_data().strftime("%d/%m/%Y %H:%M"))
-#             hora = st.time_input(
-#                 "NOVA HORA",
-#                 op.get_data().time()
-#             )
-#             queixa_principal = st.text_input(
-#                 "NOVA QUEIXA PRINCIPAL",
-#                 op.get_queixa_principal()
-#             )
-#             historico_saude = st.text_input(
-#                 "NOVO HISTÓRICO DE SAÚDE",
-#                 op.get_historico_saude()
-#             )
-#             avaliacao = st.text_input(
-#                 "NOVA AVALIAÇÃO",
-#                 op.get_avaliacao()
-#             )
-#             prescricao = st.text_input(
-#                 "NOVA PRESCRIÇÃO",
-#                 op.get_prescricao()
-#             )
-#             id_horario = st.number_input(
-#                 "NOVO ID DO HORÁRIO",
-#                 min_value=0,
-#                 step=1,
-#                 value=op.get_id_horario()
-#             )
-#             if st.button("ATUALIZAR"):
-#                 id = op.get_id()
-#                 data_hora = datetime.combine(data, hora)
-#                 Service.atendimento_atualizar(
-#                     id,
-#                     data_hora,
-#                     queixa_principal,
-#                     historico_saude,
-#                     avaliacao,
-#                     prescricao,
-#                     id_horario
-#                 )
-#                 st.success(
-#                     "ATENDIMENTO ATUALIZADO COM SUCESSO"
-#                 )
-   def atualizar():
+    def atualizar():
         atendimentos = Service.atendimento_listar()
         if len(atendimentos) == 0: st.write("Nenhum atendimento cadastrado")
         else:
             horarios = Service.horario_listar()
-            op = st.selectbox("Atualização de atendimento", atendimentos)
-            data = st.text_input("Informe a nova data e o horário do serviço", op.get_data().strftime("%d/%m/%Y %H:%M"))
-            queixa_principal = st.text_input("Informe a queixa principal")
-            historico_saude = st.text_input("Informe o histórico de saúde")
-            avaliacao = st.text_input("Informe a avaliação médica")
-            prescricao = st.text_input("Informe a prescrição")
-            id_horario = None if op.get_id_horario() in [0, None] else op.get_id_horario()
-            horario = st.selectbox("Informe o novo horario", horarios, next((i for i, c in enumerate(horarios) if c.get_id() == id_horario), None))
+            op = st.selectbox("Atualização de Atendimentos", atendimentos)
+            data = st.text_input("Informe a nova data e horário do atendimento", op.get_data().strftime("%d/%m/%Y %H:%M"))
+            queixa_principal = st.text_input("Informe a nova queixa principal", op.get_queixa_principal())
+            historico_saude = st.text_input("Informe o novo histórico de saúde", op.get_historico_saude())
+            avaliacao = st.text_input("Informe a nova avaliação", op.get_avaliacao())
+            prescricao = st.text_input("Informe a nova prescrição", op.get_prescricao())
+            horario = st.selectbox("Informe o novo horário", horarios,\
+                                    next((i for i, c in enumerate(horarios) if c.get_id() == op.get_id_horario()), None))
             if st.button("Atualizar"):
-                id_horario = None
-                if horario != None: id_horario = horario.get_id()
-                Service.horario_atualizar(datetime.strptime(data, "%d/%m/%Y %H:%M"), queixa_principal, historico_saude, avaliacao, prescricao, id_horario)
-                st.success("Horário atualizado com sucesso")
+                Service.atendimento_atualizar(op.get_id(), datetime.strptime(data, "%d/%m/%Y %H:%M"),\
+                                             queixa_principal, historico_saude, avaliacao, prescricao,\
+                                             horario.get_id(), op.get_total(), op.get_pago())
+                st.success("Atendimento atualizado com sucesso")
                 time.sleep(2)
                 st.rerun()
 
-   def excluir():
+    def excluir():
         atendimentos = Service.atendimento_listar()
-        if len(atendimentos) == 0:
-            st.write("NENHUM ATENDIMENTO CADASTRADO")
+        if len(atendimentos) == 0: st.write("Nenhum atendimento cadastrado")
         else:
-            op = st.selectbox(
-                "EXCLUSÃO DE ATENDIMENTOS",
-                atendimentos
-            )
-            if st.button("EXCLUIR"):
-                id = op.get_id()
-                Service.atendimento_excluir(id)
-                st.success(
-                    "ATENDIMENTO EXCLUÍDO COM SUCESSO")
+            op = st.selectbox("Exclusão de Atendimentos", atendimentos)
+            if st.button("Excluir"):
+                Service.atendimento_excluir(op.get_id())
+                st.success("Atendimento excluído com sucesso")
+                time.sleep(2)
+                st.rerun()

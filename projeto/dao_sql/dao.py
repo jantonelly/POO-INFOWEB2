@@ -1,4 +1,5 @@
 import sqlite3
+from abc import ABC, abstractmethod
 
 class DAO:
     conn = None
@@ -19,3 +20,23 @@ class DAO:
         cursor.execute(sql, params or [])
         cls.conn.commit()
         return cursor
+
+    @abstractmethod
+    def inserir(self, obj):
+        pass
+
+    @abstractmethod
+    def listar(self):
+        pass
+
+    @abstractmethod
+    def listar_id(self, id):
+        pass
+
+    @abstractmethod
+    def atualizar(self, obj):
+        pass
+
+    @abstractmethod
+    def excluir(self, id):
+        pass

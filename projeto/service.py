@@ -3,7 +3,7 @@ from dao_sql.clientedao import ClienteDAO
 from models.servico import Servico
 from dao_sql.servicodao import ServicoDAO
 from models.horario import Horario
-from dao_sql.horariodao import HorariosDAO
+from dao_sql.horariosdao import HorariosDAO
 from models.profissional import Profissional
 from dao_sql.profissionaldao import ProfissionalDAO
 from models.atendimento import Atendimento
@@ -35,7 +35,7 @@ class Service:
         horarios = Service.horario_listar_cliente(id)
         if len(horarios) > 0:
             raise ValueError("Não é possível excluir um cliente que possui horários agendados.")
-    ClienteDAO().excluir(id)
+        ClienteDAO().excluir(id)
     @staticmethod
     def cliente_criar_admin():
         for c in Service.cliente_listar():
@@ -230,8 +230,11 @@ class Service:
     
     #ATENDIMENTO
     @staticmethod
-    def atendimento_inserir(data, queixa_principal, historico_saude, avaliacao, prescricao, id_horario):
-        obj = Atendimento(0, data, queixa_principal, historico_saude, avaliacao, prescricao, id_horario)
+    def atendimento_inserir(data, queixa_principal, historico_saude, avaliacao, prescricao, id_horario, total=0, pago=False):
+        obj = Atendimento(0, data, queixa_principal, historico_saude, avaliacao, prescricao)
+        obj.set_id_horario(id_horario)
+        obj.set_total(total)
+        obj.set_pago(pago)
         AtendimentoDAO().inserir(obj)
     @staticmethod
     def atendimento_listar():
@@ -240,8 +243,11 @@ class Service:
     def atendimento_listar_id(id):
         return AtendimentoDAO().listar_id(id)
     @staticmethod
-    def atendimento_atualizar(id, data, queixa_principal, historico_saude, avaliacao, prescricao, id_horario):
-        obj = Atendimento(id, data, queixa_principal, historico_saude, avaliacao, prescricao, id_horario)
+    def atendimento_atualizar(id, data, queixa_principal, historico_saude, avaliacao, prescricao, id_horario, total, pago):
+        obj = Atendimento(id, data, queixa_principal, historico_saude, avaliacao, prescricao)
+        obj.set_id_horario(id_horario)
+        obj.set_total(total)
+        obj.set_pago(pago)
         AtendimentoDAO().atualizar(obj)
     @staticmethod
     def atendimento_excluir(id):
