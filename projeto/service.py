@@ -81,6 +81,34 @@ class Service:
     @staticmethod
     def servico_excluir(id):
         ServicoDAO().excluir(id)
+    #TOTALIZAR ATNEDIMENTO DOS SERVIÇOS
+    @staticmethod
+    def atendimento_totalizar_meus_servicos(
+        id_profissional, data_inicial, data_final):
+        atendimentos = Service.atendimento_listar()
+        resultado = {}
+        for atendimento in atendimentos:
+            horario = Service.horario_listar_id(
+                atendimento.get_id_horario())
+            if horario is None:
+                continue
+            data_atendimento = atendimento.get_data().date()
+            if (
+                horario.get_id_profissional() == id_profissional
+                and data_inicial <= data_atendimento <= data_final
+            ):
+                servico = Service.servico_listar_id(
+                    horario.get_id_servico())
+                if servico is not None:
+                    descricao = servico.get_descricao()
+                    if descricao not in resultado:
+                        resultado[descricao] = 0
+                    resultado[descricao] += 1
+        lista = []
+        for descricao, quantidade in resultado.items():
+            lista.append({"SERVIÇO": descricao,"QUANTIDADE": quantidade})
+        return lista
+
 
     #HORÁRIO
     @staticmethod
@@ -172,6 +200,46 @@ class Service:
             horario.set_id_cliente(id_cliente)
             horario.set_id_servico(id_servico)
             HorariosDAO().atualizar(horario)
+        
+    @staticmethod
+    def horario_agenda_semana():
+        from datetime import date, timedelta
+        hoje = date.today()
+        ultimo_dia = hoje + timedelta(days=6)
+        resultado = []
+        for horario in Service.horario_listar():
+            data_horario = horario.get_data().date()
+            if (
+                hoje <= data_horario <= ultimo_dia
+                and horario.get_id_cliente() not in (None, 0)
+            ):
+                cliente = Service.cliente_listar_id(
+                    horario.get_id_cliente()
+                )
+                servico = Service.servico_listar_id(
+                    horario.get_id_servico()
+                )
+                profissional = Service.profissional_listar_id(
+                    horario.get_id_profissional()
+                )
+                resultado.append({
+                    "ID": horario.get_id(),
+                    "DATA": horario.get_data().strftime("%d/%m/%Y"),
+                    "HORA": horario.get_data().strftime("%H:%M"),
+                    "CLIENTE": cliente.get_nome() if cliente else "",
+                    "SERVIÇO": servico.get_descricao() if servico else "",
+                    "PROFISSIONAL": profissional.get_nome() if profissional else ""
+                })
+        resultado.sort(
+            key=lambda item: (
+                datetime.strptime(
+                    item["DATA"] + " " + item["HORA"],
+                    "%d/%m/%Y %H:%M"
+                )
+            )
+        )
+        return resultado
+
 
     #PROFISSIONAL
     @staticmethod
@@ -257,23 +325,21 @@ class Service:
     @staticmethod
     def atendimento_totalizar_profissionais(data_inicial, data_final):
         profissionais = Service.profissional_listar()
-        horarios = Service.horario_listar()
+        atendimentos = Service.atendimento_listar()
         resultado = []
         for profissional in profissionais:
             quantidade = 0
-            for h in horarios:
-                data_horario = h.get_data().date()
-                if (
-                    h.get_id_profissional() == profissional.get_id()
-                    and h.get_confirmado() == True
-                    and data_inicial <= data_horario <= data_final
-                ):
-                    quantidade = quantidade + 1
-            resultado.append({
-                "PROFISSIONAL": profissional.get_nome(),
-                "ATENDIMENTOS CONFIRMADOS": quantidade
-            })
+            for atendimento in atendimentos:
+                horario = Service.horario_listar_id(atendimento.get_id_horario())
+                if horario is None:
+                    continue
+                data_atendimento = atendimento.get_data().date()
+                if (horario.get_id_profissional() == profissional.get_id()
+                    and data_inicial <= data_atendimento <= data_final):
+                    quantidade += 1
+            resultado.append({"PROFISSIONAL": profissional.get_nome(), "TOTAL DE ATENDIMENTOS": quantidade})
         return resultado
+
 
     @staticmethod
     def validar_email_unico(email, tipo, id_atual=None):
