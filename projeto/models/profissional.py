@@ -43,4 +43,4 @@ class Profissional:
    
     @staticmethod
     def from_json(dic):
-        return Profissional(dic["id"], dic["nome"], dic["email"], dic["especialidade"], dic["senha"],dic.get("foto"))
+        return Profissional(dic["id"], dic["nome"], dic["email"], dic["especialidade"], dic["senha"], dic.get("foto"))

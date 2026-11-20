@@ -53,7 +53,10 @@ class ManterClienteUI:
             if foto:
                 st.image(foto, width=150)
             elif op.get_foto():
-                st.image(op.get_foto(), width=150)
+                if op.get_foto():
+                    st.image(op.get_foto(), width=150)
+                else:
+                    st.write("Nenhuma foto cadastrada.")
             if st.button("ATUALIZAR"):
                 try:
                     imagem = foto.getvalue() if foto else None

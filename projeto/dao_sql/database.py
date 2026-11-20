@@ -28,7 +28,8 @@ class Database:
                 nome TEXT NOT NULL,
                 email TEXT NOT NULL,
                 fone TEXT,
-                senha TEXT NOT NULL
+                senha TEXT NOT NULL,
+                foto  BLOB
             );
         """)
 
@@ -39,7 +40,8 @@ class Database:
                 nome TEXT NOT NULL,
                 email TEXT NOT NULL,
                 especialidade TEXT NULL,
-                senha TEXT NOT NULL
+                senha TEXT NOT NULL,
+                foto BLOB
             );
         """)
 
@@ -83,29 +85,7 @@ class Database:
             );
 
 
-        # Adicionar coluna foto na tabela cliente
-        colunas_cliente = [
-            coluna[1] for coluna in
-            cls.conn.execute("PRAGMA table_info(cliente)").fetchall()
-        ]
-
-        if "foto" not in colunas_cliente:
-            cls.execute(
-                "ALTER TABLE cliente ADD COLUMN foto BLOB"
-            )
-
-        # Adicionar coluna foto na tabela profissional
-        colunas_profissional = [
-            coluna[1] for coluna in
-            cls.conn.execute("PRAGMA table_info(profissional)").fetchall()
-        ]
-
-        if "foto" not in colunas_profissional:
-            cls.execute(
-                "ALTER TABLE profissional ADD COLUMN foto BLOB"
-            );
         """)
-
 
 if __name__ == "__main__":
     Database.abrir()

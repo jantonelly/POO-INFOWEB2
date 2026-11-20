@@ -5,22 +5,22 @@ class Cliente:
         self.set_email(email)
         self.set_fone(fone)
         self.set_senha(senha)
-        self.set_foto(senha)
-   
+        self.set_foto(foto)
+    
     def set_id(self, id):
-        if id < 0: raise ValueError("Id deve ser positivo")
+        if id < 0: raise ValueError('Id deve ser positivo')
         self.__id = id
     def set_nome(self, nome):
-        if nome == "": raise ValueError("Nome deve ser informado")
+        if nome == '': raise ValueError('Nome deve ser informado')
         self.__nome = nome
     def set_email(self, email):
-        if email == "": raise ValueError("E-mail deve ser informado")
+        if email == '': raise ValueError('E-mail deve ser informado')
         self.__email = email
     def set_fone(self, fone):
-        if fone == "": raise ValueError("Fone deve ser informado")
+        if fone == '': raise ValueError('Fone deve ser informado')
         self.__fone = fone
     def set_senha(self, senha):
-        if senha == "": raise ValueError("Senha deve ser informada")
+        if senha == '': raise ValueError('Senha deve ser informada')
         self.__senha = senha
     def set_foto(self, foto):
         self.__foto = foto
@@ -30,19 +30,18 @@ class Cliente:
     def get_email(self) : return self.__email
     def get_fone(self) : return self.__fone
     def get_senha(self) : return self.__senha
-    def get_foto(self): return self.__foto
+    def get_foto(self): return self.__foto 
+    
 
     def __str__(self):
-        return f"{self.__id} - {self.__nome} - {self.__email} - {self.__fone}"
+        return f'{self.__id} - {self.__nome} - {self.__email} - {self.__fone}'
+    
+    def to_dict(self):
+        return { 'id':self.__id, 'nome':self.__nome, 'email':self.__email, 'fone':self.__fone }
 
     def to_json(self):
-        return { "id":self.__id, "nome":self.__nome, "email":self.__email, "fone":self.__fone, "senha":self.__senha}
-
+        return { 'id':self.__id, 'nome':self.__nome, 'email':self.__email, 'fone':self.__fone, 'senha':self.__senha }
+    
     @staticmethod
     def from_json(dic):
-        return Cliente(dic["id"], dic["nome"], dic["email"], dic["fone"], dic["senha"], dic.get("foto"))
-    
-# Sobrecarga de método
-
-#x = Cliente(1, "nome1", "email1", "fone1")   # Cliente.__init__()
-#y = Cliente.from_json({ "id":1, "nome":"nome1", "email":"email1", "fone":"fone1" })
+        return Cliente(dic['id'], dic['nome'], dic['email'], dic['fone'], dic['senha'],  dic.get("foto"))
