@@ -46,9 +46,10 @@ class Service:
     @staticmethod
     def cliente_criar_admin():
         for c in Service.cliente_listar():
-            if c.get_email() == "admin": return
-        Service.cliente_inserir("admin", "admin", "fone", "1234")
-    @staticmethod
+            if c.get_email().casefold() == "admin":
+                return
+        obj = Cliente(0, "admin", "admin", "fone", "1234")
+        ClienteDAO().inserir(obj)
     def cliente_autenticar(email, senha):
         for c in Service.cliente_listar():
             if c.get_email() == email and c.get_senha() == senha:

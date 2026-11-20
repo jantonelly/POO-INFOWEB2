@@ -47,7 +47,7 @@ class ManterHorarioUI:
                 id_profissional = (
                     profissional.get_id()
                     if profissional is not None else 0)
-                data_convertida = datetime.strptime(data, "%d/%m/%Y %H:%M"
+                data_convertida = datetime.strptime(data, "%d/%m/%Y %H:%M")
                 Service.horario_inserir(
                     data_convertida,
                     confirmado,
