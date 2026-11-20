@@ -81,7 +81,31 @@ class Database:
 
                 FOREIGN KEY (id_horario) REFERENCES horario(id) ON DELETE CASCADE
             );
+
+
+        # Adicionar coluna foto na tabela cliente
+        colunas_cliente = [
+            coluna[1] for coluna in
+            cls.conn.execute("PRAGMA table_info(cliente)").fetchall()
+        ]
+
+        if "foto" not in colunas_cliente:
+            cls.execute(
+                "ALTER TABLE cliente ADD COLUMN foto BLOB"
+            )
+
+        # Adicionar coluna foto na tabela profissional
+        colunas_profissional = [
+            coluna[1] for coluna in
+            cls.conn.execute("PRAGMA table_info(profissional)").fetchall()
+        ]
+
+        if "foto" not in colunas_profissional:
+            cls.execute(
+                "ALTER TABLE profissional ADD COLUMN foto BLOB"
+            );
         """)
+
 
 if __name__ == "__main__":
     Database.abrir()

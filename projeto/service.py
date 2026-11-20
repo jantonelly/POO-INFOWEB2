@@ -13,9 +13,9 @@ from datetime import datetime, timedelta
 class Service:
     #CLIENTE
     @staticmethod
-    def cliente_inserir(nome, email, fone, senha):
+    def cliente_inserir(nome, email, fone, senha, foto=None):
         Service.validar_email_unico(email, "cliente")
-        obj = Cliente(0, nome, email, fone, senha)
+        obj = Cliente(0, nome, email, fone, senha, foto)
         ClienteDAO().inserir(obj)
     @staticmethod
     def cliente_listar():
@@ -26,10 +26,17 @@ class Service:
     def cliente_listar_id(id):
         return ClienteDAO().listar_id(id)
     @staticmethod
-    def cliente_atualizar(id, nome, email, fone, senha):
+    def cliente_atualizar(id, nome, email, fone, senha, foto=None):
         Service.validar_email_unico(email, "cliente", id)
-        obj = Cliente(id, nome, email, fone, senha)
+        obj = Cliente(id, nome, email, fone, senha,foto)
         ClienteDAO().atualizar(obj)
+    @staticmethod
+    def cliente_atualizar_foto(id, foto):
+        cliente = Service.cliente_listar_id(id)
+        if cliente is None:
+            raise ValueError("Cliente não encontrado.")
+        cliente.set_foto(foto)
+        ClienteDAO().atualizar(cliente)
     @staticmethod
     def cliente_excluir(id):
         horarios = Service.horario_listar_cliente(id)
@@ -200,7 +207,6 @@ class Service:
             horario.set_id_cliente(id_cliente)
             horario.set_id_servico(id_servico)
             HorariosDAO().atualizar(horario)
-        
     @staticmethod
     def horario_agenda_semana():
         from datetime import date, timedelta
@@ -240,12 +246,11 @@ class Service:
         )
         return resultado
 
-
     #PROFISSIONAL
     @staticmethod
-    def profissional_inserir(nome, email, especialidade, senha):
+    def profissional_inserir(nome, email, especialidade, senha, foto=None):
         Service.validar_email_unico(email, "profissional")
-        obj = Profissional(0, nome, email, especialidade, senha)
+        obj = Profissional(0, nome, email, especialidade, senha, foto)
         ProfissionalDAO().inserir(obj)
     @staticmethod
     def profissional_listar():
@@ -256,11 +261,17 @@ class Service:
     def profissional_listar_id(id):
         return ProfissionalDAO().listar_id(id)
     @staticmethod
-    def profissional_atualizar(
-        id, nome, email, especialidade, senha):
+    def profissional_atualizar(id, nome, email, especialidade, senha, foto=None):
         Service.validar_email_unico(email, "profissional", id)
-        obj = Profissional(id, nome, email, especialidade, senha)
+        obj = Profissional(id, nome, email, especialidade, senha, foto)
         ProfissionalDAO().atualizar(obj)
+    @staticmethod
+    def profissional_atualizar_foto(id, foto):
+        profissional = Service.profissional_listar_id(id)
+        if profissional is None:
+            raise ValueError("Profissional não encontrado.")
+        profissional.set_foto(foto)
+        ProfissionalDAO().atualizar(profissional)
     @staticmethod
     def profissional_excluir(id):
         horarios = Service.horario_listar_profissional(id)

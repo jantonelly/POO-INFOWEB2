@@ -24,9 +24,15 @@ class ManterClienteUI:
         email = st.text_input("INFORME O E-MAIL")
         fone = st.text_input("INFORM O TELEFONE")
         senha = st.text_input("INFORME A SENHA", type="password")
+        foto = st.file_uploader("ESCOLHA A FOTO DO CLIENTE",
+            type=["jpg", "jpeg", "png"],
+            key="foto_cliente_novo")
+        if foto:
+            st.image(foto, width=150)
         if st.button("INSERIR"):
             try:
-                Service.cliente_inserir(nome, email, fone, senha)
+                imagem = foto.getvalue() if foto else None
+                Service.cliente_inserir(nome, email, fone, senha, imagem)
                 st.success("CLIENTE INSERIDO COM SUCESSO")
                 time.sleep(2)
                 st.rerun()
@@ -41,9 +47,17 @@ class ManterClienteUI:
             email = st.text_input("NOVO E-MAIL", op.get_email())
             fone = st.text_input("NOVO TELEFONE", op.get_fone())
             senha = st.text_input("NOVA SENHA", op.get_senha(), type="password")
+            foto = st.file_uploader("ESCOLHA UMA NOVA FOTO",
+            type=["jpg", "jpeg", "png"],
+            key="foto_cliente_atualizar")
+            if foto:
+                st.image(foto, width=150)
+            elif op.get_foto():
+                st.image(op.get_foto(), width=150)
             if st.button("ATUALIZAR"):
                 try:
-                    Service.cliente_atualizar(id, nome, email, fone, senha)
+                    imagem = foto.getvalue() if foto else None
+                    Service.cliente_atualizar(id, nome, email, fone, senha, imagem)
                     st.success("CLIENTE ATUALIZADO COM SUCESSO")
                     time.sleep(2)
                     st.rerun()
@@ -54,7 +68,7 @@ class ManterClienteUI:
         if len(clientes) == 0: st.write("NENHUM CLIENTE CADASTRADO")
         else:
             op = st.selectbox("EXCLUSÃO DE CLIENTES", clientes)
-            if st.button("INSERIR"):
+            if st.button("EXCLUIR"):
                 try:
                     Service.cliente_excluir(id)
                     st.success("CLIENTE EXCLUIDO COM SUCESSO")
