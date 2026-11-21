@@ -54,7 +54,11 @@ class ManterClienteUI:
                 st.image(foto, width=150)
             elif op.get_foto():
                 if op.get_foto():
-                    st.image(op.get_foto(), width=150)
+                    #st.image(op.get_foto(), width=150)
+                    st.write("Nome:", op.get_nome())
+                    st.write("E-mail:", op.get_email())
+                    st.write("Senha:", op.get_senha())
+                    st.write("Foto:", op.get_foto())
                 else:
                     st.write("Nenhuma foto cadastrada.")
             if st.button("ATUALIZAR"):

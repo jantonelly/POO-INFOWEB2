@@ -13,16 +13,26 @@ class ClienteDAO(DAO):
 
     def listar(self):
         self.abrir()
-        sql = 'SELECT * FROM cliente'
+        sql = '''
+            SELECT id, nome, email, fone, senha, foto
+            FROM cliente
+        '''
         cursor = self.execute(sql)
         rows = cursor.fetchall()
-        objs = [Cliente(id, nome, email, fone, senha, foto) for (id, nome, email, fone, senha, foto) in rows]
+        objs = [
+            Cliente(id, nome, email, fone, senha, foto)
+            for id, nome, email, fone, senha, foto in rows
+        ]
         self.fechar()
         return objs
 
     def listar_id(self, id):
         self.abrir()
-        sql = 'SELECT * FROM cliente WHERE id = ?'
+        sql = '''
+            SELECT id, nome, email, fone, senha, foto
+            FROM cliente
+            WHERE id = ?
+        '''
         cursor = self.execute(sql, (id,))
         row = cursor.fetchone()
         obj = Cliente(*row) if row else None
@@ -31,15 +41,34 @@ class ClienteDAO(DAO):
 
     def atualizar(self, obj):
         self.abrir()
+
         sql = '''
-            UPDATE cliente SET nome=?, email=?, fone=?, senha=?, foto=?
+            UPDATE cliente
+            SET nome=?, email=?, fone=?, senha=?, foto=?
             WHERE id=?
         '''
-        self.execute(sql, (obj.get_nome(), obj.get_email(), obj.get_fone(), obj.get_senha(), obj.get_id(), obj.get_foto()))
-        self.fechar()
 
-    def excluir(self, id):
-        self.abrir()
-        sql = 'DELETE FROM cliente WHERE id=?'
-        self.execute(sql, (id,))
+        self.execute(sql, (
+            obj.get_nome(),
+            obj.get_email(),
+            obj.get_fone(),
+            obj.get_senha(),
+            obj.get_foto(),
+            obj.get_id()
+        ))
+
         self.fechar()
+    # def atualizar(self, obj):
+    #     self.abrir()
+    #     sql = '''
+    #         UPDATE cliente SET nome=?, email=?, fone=?, senha=?, foto=?
+    #         WHERE id=?
+    #     '''
+    #     self.execute(sql, (obj.get_nome(), obj.get_email(), obj.get_fone(), obj.get_senha(), obj.get_id(), obj.get_foto()))
+    #     self.fechar()
+
+    # def excluir(self, id):
+    #     self.abrir()
+    #     sql = 'DELETE FROM cliente WHERE id=?'
+    #     self.execute(sql, (id,))
+    #     self.fechar()
