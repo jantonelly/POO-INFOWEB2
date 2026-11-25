@@ -56,19 +56,10 @@ class ClienteDAO(DAO):
             obj.get_foto(),
             obj.get_id()
         ))
-
         self.fechar()
-    # def atualizar(self, obj):
-    #     self.abrir()
-    #     sql = '''
-    #         UPDATE cliente SET nome=?, email=?, fone=?, senha=?, foto=?
-    #         WHERE id=?
-    #     '''
-    #     self.execute(sql, (obj.get_nome(), obj.get_email(), obj.get_fone(), obj.get_senha(), obj.get_id(), obj.get_foto()))
-    #     self.fechar()
 
-    # def excluir(self, id):
-    #     self.abrir()
-    #     sql = 'DELETE FROM cliente WHERE id=?'
-    #     self.execute(sql, (id,))
-    #     self.fechar()
+    def excluir(self, id):
+        self.abrir()
+        sql = 'DELETE FROM cliente WHERE id=?'
+        self.execute(sql, (id,))
+        self.fechar()

@@ -46,13 +46,11 @@ class ManterProfissionalUI:
         email = st.text_input("INFORME O E-MAIL")
         especialidade = st.text_input("INFORME A ESPECIALIDADE")
         senha = st.text_input("INFORME A SENHA", type="password")
-
         foto = st.file_uploader(
             "ESCOLHA A FOTO DO PROFISSIONAL",
             type=["jpg", "jpeg", "png"],
             key="foto_profissional_novo"
         )
-
         if foto:
             st.image(foto, width=150)
 

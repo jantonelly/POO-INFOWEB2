@@ -6,27 +6,21 @@ class PerfilClienteUI:
 
     def main():
         st.header("MEUS DADOS")
-
         id = st.session_state["usuario_id"]
         op = Service.cliente_listar_id(id)
-
         if op is None:
             st.error("Cliente não encontrado.")
             return
-
         st.subheader("Minha foto de perfil")
-
         if op.get_foto():
             st.image(op.get_foto(), width=180)
         else:
             st.info("Você ainda não possui uma foto.")
-
         nova_foto = st.file_uploader(
             "Escolha uma nova foto",
             type=["jpg", "jpeg", "png"],
             key="foto_perfil_cliente"
         )
-
         if nova_foto:
             st.image(nova_foto, width=180)
 

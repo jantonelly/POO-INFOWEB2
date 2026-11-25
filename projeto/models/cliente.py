@@ -22,7 +22,7 @@ class Cliente:
     def set_senha(self, senha):
         if senha == '': raise ValueError('Senha deve ser informada')
         self.__senha = senha
-    def set_foto(self, foto):
+    def set_foto(selfdef, foto):
         self.__foto = foto
 
     def get_id(self) : return self.__id
