@@ -311,7 +311,7 @@ class Service:
     #ATENDIMENTO
     @staticmethod
     def atendimento_inserir(data, queixa_principal, historico_saude, avaliacao, prescricao, id_horario, total=0, pago=False):
-        obj = Atendimento(0, data, queixa_principal, historico_saude, avaliacao, prescricao)
+        obj = Atendimento(0, data, queixa_principal, historico_saude, avaliacao, prescricao, id_horario)
         obj.set_id_horario(id_horario)
         obj.set_total(total)
         obj.set_pago(pago)
